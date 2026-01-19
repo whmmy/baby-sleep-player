@@ -614,7 +614,15 @@ createApp({
             <div class="player-content">
                 <!-- 当前播放信息 -->
                 <div class="now-playing">
-                    <div class="track-icon">🌙</div>
+                    <div class="track-icon">
+                        <div class="sound-wave" :class="{ playing: isPlaying }">
+                            <span class="wave-bar"></span>
+                            <span class="wave-bar"></span>
+                            <span class="wave-bar"></span>
+                            <span class="wave-bar"></span>
+                            <span class="wave-bar"></span>
+                        </div>
+                    </div>
                     <div class="track-info">
                         <h2>{{ currentTrack ? currentTrack.name : '选择音频开始播放' }}</h2>
                         <p>{{ isPlaying ? '播放中' : '已暂停' }}</p>
