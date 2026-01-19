@@ -12,6 +12,7 @@ body {
     justify-content: center;
     align-items: center;
     padding: 20px;
+    user-select: none;
 }
 
 .player-container {
@@ -29,6 +30,33 @@ body {
     color: white;
     padding: 30px 20px;
     text-align: center;
+    position: relative;
+}
+
+.theme-toggle {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+}
+
+.theme-toggle:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.1);
+}
+
+.theme-toggle:active {
+    transform: scale(0.95);
 }
 
 .header h1 {
@@ -369,12 +397,21 @@ body {
     padding: 20px;
     max-height: 300px;
     overflow-y: auto;
+    display: flex;
+    flex-direction: column;
 }
 
-.playlist h3 {
+.playlistTitle {
     font-size: 16px;
     color: #2d3748;
     margin-bottom: 12px;
+    position: sticky;
+    top: 0;
+    background: #f7fafc;
+    padding:0 20px;
+    z-index: 10;
+    margin-top: -20px;
+    padding-top: 20px;
 }
 
 .track-item {
@@ -421,6 +458,171 @@ body {
     background: rgba(255, 255, 255, 0.3);
 }
 
+/* 美化滚动条 */
+.playlist::-webkit-scrollbar {
+    width: 8px;
+}
+
+.playlist::-webkit-scrollbar-track {
+    background: #edf2f7;
+    border-radius: 4px;
+}
+
+.playlist::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+    border-radius: 4px;
+    transition: background 0.3s;
+}
+
+.playlist::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #4c51bf 0%, #5a3d7a 100%);
+}
+
+/* Firefox 滚动条样式 */
+.playlist {
+    scrollbar-width: thin;
+    scrollbar-color: #5a67d8 #edf2f7;
+}
+
+/* 暗黑模式样式 */
+body.dark-mode {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+}
+
+body.dark-mode .player-container {
+    background: rgba(30, 30, 46, 0.95);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+body.dark-mode .header {
+    background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
+}
+
+body.dark-mode .now-playing {
+    background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+}
+
+body.dark-mode .track-info h2 {
+    color: #e2e8f0;
+}
+
+body.dark-mode .track-info p {
+    color: #a0aec0;
+}
+
+body.dark-mode .time {
+    color: #a0aec0;
+}
+
+body.dark-mode .progress-bar {
+    background: #4a5568;
+}
+
+body.dark-mode .control-btn {
+    background: #4a5568;
+    color: #cbd5e0;
+}
+
+body.dark-mode .control-btn:hover {
+    background: #2d3748;
+}
+
+body.dark-mode .play-btn {
+    background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
+}
+
+body.dark-mode .volume-control {
+    background: #2d3748;
+}
+
+body.dark-mode .volume-icon {
+    color: #a0aec0;
+}
+
+body.dark-mode .volume-slider {
+    background: #4a5568;
+}
+
+body.dark-mode .volume-value {
+    color: #a0aec0;
+}
+
+body.dark-mode .timer-section {
+    background: #2d3748;
+}
+
+body.dark-mode .timer-title {
+    color: #e2e8f0;
+}
+
+body.dark-mode .timer-countdown {
+    background: #4a5568;
+    color: #63b3ed;
+}
+
+body.dark-mode .timer-select {
+    background: #1a202c;
+    border-color: #4a5568;
+    color: #e2e8f0;
+}
+
+body.dark-mode .timer-select:hover {
+    border-color: #718096;
+}
+
+body.dark-mode .timer-select:focus {
+    border-color: #63b3ed;
+}
+
+body.dark-mode .tips {
+    color: #a0aec0;
+}
+
+body.dark-mode .github-link {
+    background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+}
+
+body.dark-mode .github-link a {
+    color: #63b3ed;
+    background: #1a202c;
+}
+
+body.dark-mode .star-tip {
+    color: #63b3ed;
+}
+
+body.dark-mode .playlist {
+    background: #1a202c;
+}
+
+body.dark-mode .playlist h3 {
+    color: #e2e8f0;
+    background: #1a202c;
+    margin-top: -20px;
+    padding: 8px 0;
+    padding-top: 20px;
+}
+
+body.dark-mode .track-item {
+    background: #2d3748;
+}
+
+body.dark-mode .track-item:hover {
+    background: #4a5568;
+}
+
+body.dark-mode .track-item.active {
+    background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
+}
+
+body.dark-mode .playlist::-webkit-scrollbar-track {
+    background: #2d3748;
+}
+
+body.dark-mode .playlist {
+    scrollbar-color: #4a5568 #2d3748;
+}
+
 /* 移动端优化 */
 @media (max-width: 480px) {
     body {
@@ -462,5 +664,12 @@ body {
 
     .timer-btn {
         width: 100%;
+    }
+
+    .theme-toggle {
+        top: 15px;
+        right: 15px;
+        width: 36px;
+        height: 36px;
     }
 }

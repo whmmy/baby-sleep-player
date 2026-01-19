@@ -6,21 +6,85 @@ createApp({
         // 支持本地音频和在线音频URL
         const audioFiles = ref([
             {
-                id: 1,
+                id: 0,
                 name: '哄睡白噪音',
-                url: './assets/哄睡白噪音.mp3'  // 本地音频
+                url: './assets/哄睡白噪音.mp3'
             },
-            // 示例：添加在线音频
-            // {
-            //     id: 2,
-            //     name: '雨声白噪音',
-            //     url: 'https://example.com/rain.mp3'  // 在线音频
-            // },
-            // {
-            //     id: 3,
-            //     name: '海浪声',
-            //     url: 'https://example.com/ocean.mp3'
-            // }
+            {
+                id: 1,
+                name: '嘘声',
+                url: './assets/06嘘声.aac'
+            },
+            {
+                id: 2,
+                name: '纯白噪音',
+                url: './assets/05纯白噪音.aac'
+            },
+            {
+                id: 3,
+                name: '大雨',
+                url: './assets/04大雨.aac'
+            },
+            {
+                id: 4,
+                name: '绿皮火车',
+                url: './assets/01绿皮火车.aac'
+            },
+            {
+                id: 5,
+                name: '雨天火车',
+                url: './assets/02雨天火车.aac'
+            },
+            {
+                id: 6,
+                name: '坐火车',
+                url: './assets/07坐火车.aac'
+            },
+            {
+                id: 7,
+                name: '雪国列车',
+                url: './assets/08雪国列车.aac'
+            },
+            {
+                id: 8,
+                name: '海上暴风雨',
+                url: './assets/03海上暴风雨.aac'
+            },
+            {
+                id: 9,
+                name: '柴火煮水',
+                url: './assets/09柴火煮水.aac'
+            },
+            {
+                id: 10,
+                name: '水疗',
+                url: './assets/13水疗.aac'
+            },
+            {
+                id: 11,
+                name: '夏夜',
+                url: './assets/10夏夜.aac'
+            },
+            {
+                id: 12,
+                name: '露营',
+                url: './assets/11露营.aac'
+            },
+            {
+                id: 13,
+                name: '露营小雨',
+                url: './assets/12露营小雨.aac'
+            },
+            {
+                id: 14,
+                name: '小鸭子',
+                url: './assets/14小鸭子.aac'
+            },
+            {
+                id: 15,
+                name: '哄睡白噪音',
+                url: './assets/哄睡白噪音.mp3'
+            }
         ]);
 
         const currentTrack = ref(null);
@@ -33,6 +97,7 @@ createApp({
         const timerEndTime = ref(null);
         const timerHours = ref(0);
         const timerMinutes = ref(30);
+        const isDarkMode = ref(false);
         let timerId = null;
 
         // 初始化音频元素
@@ -62,6 +127,31 @@ createApp({
             if (savedVolume !== null) {
                 volume.value = parseFloat(savedVolume);
                 audioElement.value.volume = volume.value;
+            }
+
+            // 加载保存的主题设置
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                isDarkMode.value = true;
+                document.body.classList.add('dark-mode');
+            }
+
+            // 加载上次播放的音频ID
+            const savedTrackId = localStorage.getItem('lastPlayedTrack');
+            if (savedTrackId !== null) {
+                const trackId = parseInt(savedTrackId);
+                const track = audioFiles.value.find(t => t.id === trackId);
+                if (track) {
+                    currentTrack.value = track;
+                    audioElement.value.src = track.url;
+                }
+            } else {
+                // 默认选择 id: 0
+                const defaultTrack = audioFiles.value.find(t => t.id === 0);
+                if (defaultTrack) {
+                    currentTrack.value = defaultTrack;
+                    audioElement.value.src = defaultTrack.url;
+                }
             }
         });
 
@@ -125,6 +215,9 @@ createApp({
                 audioElement.value.src = track.url;
                 await audioElement.value.play();
                 await requestWakeLock();
+
+                // 保存当前播放的音频ID
+                localStorage.setItem('lastPlayedTrack', track.id.toString());
             } catch (error) {
                 console.error('播放失败:', error);
                 alert('播放失败，请检查音频URL是否正确');
@@ -278,6 +371,18 @@ createApp({
             }
         }, 1000);
 
+        // 切换主题
+        const toggleTheme = () => {
+            isDarkMode.value = !isDarkMode.value;
+            if (isDarkMode.value) {
+                document.body.classList.add('dark-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        };
+
         return {
             audioFiles,
             currentTrack,
@@ -288,6 +393,7 @@ createApp({
             timerEndTime,
             timerHours,
             timerMinutes,
+            isDarkMode,
             playTrack,
             togglePlay,
             stopPlay,
@@ -296,12 +402,21 @@ createApp({
             seekTo,
             setTimer,
             cancelTimer,
-            getRemainingTime
+            getRemainingTime,
+            toggleTheme
         };
     },
     template: `
         <div class="player-container">
             <div class="header">
+                <button class="theme-toggle" @click="toggleTheme" :title="isDarkMode ? '切换到明亮模式' : '切换到暗黑模式'">
+                    <svg v-if="!isDarkMode" viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+                        <path d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 0 1-4.4 2.26 5.403 5.403 0 0 1-3.14-9.8c-.44-.06-.9-.1-1.36-.1z"/>
+                    </svg>
+                    <svg v-else viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+                        <path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58a.996.996 0 0 0-1.41 0 .996.996 0 0 0 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37a.996.996 0 0 0-1.41 0 .996.996 0 0 0 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0a.996.996 0 0 0 0-1.41l-1.06-1.06zm1.06-10.96a.996.996 0 0 0 0-1.41.996.996 0 0 0-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36a.996.996 0 0 0 0 1.41.996.996 0 0 0 1.41 0l1.06-1.06c.39-.39.39-1.03 0-1.41s-1.03-.39-1.41 0l-1.06 1.06z"/>
+                    </svg>
+                </button>
                 <h1>🌙 宝宝哄睡音频</h1>
                 <p class="subtitle">单曲循环 · 后台播放 · 定时停止</p>
             </div>
@@ -398,22 +513,11 @@ createApp({
                     <p>🔒 支持锁屏播放和后台播放</p>
                     <p>🔄 当前曲目会单曲循环播放</p>
                 </div>
-
-                <!-- GitHub 链接 -->
-                <div class="github-link">
-                    <a href="https://github.com/whmmy/baby-sleep-player" target="_blank" rel="noopener noreferrer">
-                        <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
-                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-                        </svg>
-                        <span>GitHub: whmmy/baby-sleep-player</span>
-                    </a>
-                    <p class="star-tip">如果这个项目对你有帮助，请点个 ⭐ Star 支持一下！</p>
-                </div>
             </div>
 
             <!-- 音频列表 -->
+            <h3 class="playlistTitle">🎵 音频列表</h3>
             <div class="playlist">
-                <h3>🎵 音频列表</h3>
                 <div
                     v-for="track in audioFiles"
                     :key="track.id"
@@ -428,6 +532,17 @@ createApp({
                         </span>
                     </div>
                 </div>
+            </div>
+
+            <!-- GitHub 链接 -->
+            <div class="github-link">
+                <a href="https://github.com/whmmy/baby-sleep-player" target="_blank" rel="noopener noreferrer">
+                    <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                    </svg>
+                    <span>GitHub: whmmy/baby-sleep-player</span>
+                </a>
+                <p class="star-tip">如果这个项目对你有帮助，请点个 ⭐ Star 支持一下！</p>
             </div>
         </div>
     `
