@@ -655,6 +655,213 @@ body.dark-mode .playlistTitle {
     padding-top: 20px;
 }
 
+/* 淡出模式样式 */
+.fadeout-toggle {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.fadeout-checkbox {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+    flex: 1;
+}
+
+.fadeout-info-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: none;
+    background: #edf2f7;
+    color: #5a67d8;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    flex-shrink: 0;
+}
+
+.fadeout-info-btn:hover {
+    background: #e2e8f0;
+    transform: scale(1.1);
+}
+
+.fadeout-info-btn:active {
+    transform: scale(0.95);
+}
+
+.fadeout-checkbox input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    margin: 0;
+    cursor: pointer;
+    accent-color: #5a67d8;
+}
+
+.fadeout-text {
+    margin-left: 8px;
+    font-size: 14px;
+    color: #2d3748;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.fadeout-icon {
+    font-size: 16px;
+}
+
+.fadeout-badge {
+    font-size: 11px;
+    background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+    color: white;
+    padding: 2px 8px;
+    border-radius: 10px;
+    margin-left: 4px;
+}
+
+/* 淡出模式弹窗 */
+.fadeout-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 20px;
+}
+
+.fadeout-modal-content {
+    background: white;
+    border-radius: 16px;
+    max-width: 320px;
+    width: 100%;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.fadeout-modal-header {
+    text-align: center;
+    padding: 20px 20px 12px;
+}
+
+.fadeout-modal-icon {
+    font-size: 48px;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.fadeout-modal-header h3 {
+    font-size: 20px;
+    color: #2d3748;
+    margin: 0;
+}
+
+.fadeout-modal-body {
+    padding: 12px 20px 20px;
+    color: #4a5568;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.fadeout-modal-body p {
+    margin: 8px 0;
+}
+
+.fadeout-modal-detail {
+    background: #f7fafc;
+    padding: 12px;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 13px;
+    color: #5a67d8;
+    font-weight: 500;
+}
+
+.fadeout-modal-footer {
+    padding: 12px 20px 20px;
+}
+
+.fadeout-modal-btn {
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.fadeout-modal-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(90, 103, 216, 0.3);
+}
+
+.fadeout-modal-btn:active {
+    transform: translateY(0);
+}
+
+/* 暗黑模式下的淡出样式 */
+body.dark-mode .fadeout-toggle {
+    border-top-color: #4a5568;
+}
+
+body.dark-mode .fadeout-text {
+    color: #e2e8f0;
+}
+
+body.dark-mode .fadeout-info-btn {
+    background: #4a5568;
+    color: #63b3ed;
+}
+
+body.dark-mode .fadeout-info-btn:hover {
+    background: #2d3748;
+}
+
+body.dark-mode .fadeout-modal-content {
+    background: #2d3748;
+}
+
+body.dark-mode .fadeout-modal-header h3 {
+    color: #e2e8f0;
+}
+
+body.dark-mode .fadeout-modal-body {
+    color: #cbd5e0;
+}
+
+body.dark-mode .fadeout-modal-detail {
+    background: #1a202c;
+    color: #63b3ed;
+}
+
 /* 移动端优化 */
 @media (max-width: 480px) {
     body {

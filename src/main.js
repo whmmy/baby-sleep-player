@@ -98,7 +98,21 @@ createApp({
         const timerHours = ref(0);
         const timerMinutes = ref(30);
         const isDarkMode = ref(false);
+        const isFadeOutMode = ref(false);
+        const showFadeOutInfo = ref(false);
+        const remainingTimeDisplay = ref('');
         let timerId = null;
+        let fadeOutTimerId = null;
+        const originalVolume = ref(0.7);
+
+        // ========== 淡出模式配置 ==========
+        const FADE_OUT_CONFIG = {
+            duration: 3 * 60 * 1000,      // 淡出总时长: 3分钟(毫秒)
+            stepInterval: 10 * 1000,      // 每步间隔: 10秒(毫秒)
+            title: '淡出模式',
+            tip: '淡出模式将在最后3分钟内逐步降低音量,避免音乐突然停止吓到宝宝',
+            detail: '最后3分钟内,每10秒逐渐降低音量'
+        };
 
         // 初始化音频元素
         onMounted(() => {
@@ -134,6 +148,12 @@ createApp({
             if (savedTheme === 'dark') {
                 isDarkMode.value = true;
                 document.body.classList.add('dark-mode');
+            }
+
+            // 加载淡出模式设置
+            const savedFadeOutMode = localStorage.getItem('fadeOutMode');
+            if (savedFadeOutMode === 'true') {
+                isFadeOutMode.value = true;
             }
 
             // 加载上次播放的音频ID
@@ -320,14 +340,33 @@ createApp({
             timerEndTime.value = new Date(now.getTime() + totalMinutes * 60000);
 
             // 显示定时提示
-            alert(`将在 ${timerHours.value}小时${timerMinutes.value}分钟后停止播放`);
+            const fadeOutTip = isFadeOutMode.value ? `\n(已启用淡出模式,最后${FADE_OUT_CONFIG.duration / 60000}分钟逐渐降低音量)` : '';
+            // alert(`将在 ${timerHours.value}小时${timerMinutes.value}分钟后停止播放${fadeOutTip}`);
 
             // 清除之前的定时器
             if (timerId) {
                 clearTimeout(timerId);
             }
+            if (fadeOutTimerId) {
+                clearTimeout(fadeOutTimerId);
+            }
 
-            // 启动定时器（后台播放时也会执行）
+            const totalMilliseconds = totalMinutes * 60000;
+
+            // 如果启用淡出模式,保存原始音量并设置淡出定时器
+            if (isFadeOutMode.value) {
+                originalVolume.value = volume.value;
+
+                // 计算淡出开始时间(总时间 - 淡出时长)
+                const fadeOutStartTime = totalMilliseconds - FADE_OUT_CONFIG.duration;
+
+                // 设置淡出定时器
+                fadeOutTimerId = setTimeout(() => {
+                    startFadeOut();
+                }, fadeOutStartTime);
+            }
+
+            // 启动主定时器（后台播放时也会执行）
             timerId = setTimeout(() => {
                 if (audioElement.value && !audioElement.value.paused) {
                     audioElement.value.pause();
@@ -336,8 +375,45 @@ createApp({
                     releaseWakeLock();
                     timerEndTime.value = null;
                     timerId = null;
+
+                    // 恢复原始音量
+                    if (isFadeOutMode.value) {
+                        volume.value = originalVolume.value;
+                        if (audioElement.value) {
+                            audioElement.value.volume = originalVolume.value;
+                        }
+                    }
                 }
-            }, totalMinutes * 60000);
+            }, totalMilliseconds);
+        };
+
+        // 开始淡出
+        const startFadeOut = () => {
+            if (!audioElement.value) return;
+
+            const steps = FADE_OUT_CONFIG.duration / FADE_OUT_CONFIG.stepInterval; // 计算总步数
+            const volumeDecrement = originalVolume.value / steps; // 每步降低的音量
+            let currentStep = 0;
+
+            const fadeOutInterval = setInterval(() => {
+                currentStep++;
+
+                if (currentStep >= steps) {
+                    // 最后一步,设为0
+                    if (audioElement.value) {
+                        audioElement.value.volume = 0;
+                        volume.value = 0;
+                    }
+                    clearInterval(fadeOutInterval);
+                } else {
+                    // 逐步降低音量
+                    const newVolume = originalVolume.value * (1 - currentStep / steps);
+                    if (audioElement.value) {
+                        audioElement.value.volume = newVolume;
+                        volume.value = newVolume;
+                    }
+                }
+            }, FADE_OUT_CONFIG.stepInterval);
         };
 
         // 取消定时
@@ -346,7 +422,29 @@ createApp({
                 clearTimeout(timerId);
                 timerId = null;
             }
+            if (fadeOutTimerId) {
+                clearTimeout(fadeOutTimerId);
+                fadeOutTimerId = null;
+            }
             timerEndTime.value = null;
+
+            // 如果在淡出过程中取消,恢复原始音量
+            if (isFadeOutMode.value && audioElement.value) {
+                volume.value = originalVolume.value;
+                audioElement.value.volume = originalVolume.value;
+            }
+        };
+
+        // 切换淡出模式
+        const toggleFadeOutMode = () => {
+            isFadeOutMode.value = !isFadeOutMode.value;
+            // 持久化保存淡出模式状态
+            localStorage.setItem('fadeOutMode', isFadeOutMode.value.toString());
+        };
+
+        // 显示/隐藏淡出模式说明
+        const toggleFadeOutInfo = () => {
+            showFadeOutInfo.value = !showFadeOutInfo.value;
         };
 
         // 格式化剩余时间
@@ -361,12 +459,16 @@ createApp({
             return `${minutes}:${seconds.toString().padStart(2, '0')}`;
         };
 
-        // 每秒更新剩余时间（用于UI显示，不影响定时执行）
+        // 每秒更新剩余时间显示
         setInterval(() => {
             if (timerEndTime.value) {
                 const now = new Date();
                 if (now >= timerEndTime.value) {
                     timerEndTime.value = null;
+                    remainingTimeDisplay.value = '';
+                } else {
+                    // 更新响应式变量以触发视图刷新
+                    remainingTimeDisplay.value = getRemainingTime();
                 }
             }
         }, 1000);
@@ -394,6 +496,9 @@ createApp({
             timerHours,
             timerMinutes,
             isDarkMode,
+            isFadeOutMode,
+            showFadeOutInfo,
+            FADE_OUT_CONFIG,
             playTrack,
             togglePlay,
             stopPlay,
@@ -403,11 +508,32 @@ createApp({
             setTimer,
             cancelTimer,
             getRemainingTime,
-            toggleTheme
+            toggleTheme,
+            toggleFadeOutMode,
+            toggleFadeOutInfo,
+            remainingTimeDisplay
         };
     },
     template: `
         <div class="player-container">
+            <!-- 淡出模式说明弹窗 -->
+            <div v-if="showFadeOutInfo" class="fadeout-modal" @click="toggleFadeOutInfo">
+                <div class="fadeout-modal-content" @click.stop>
+                    <div class="fadeout-modal-header">
+                        <span class="fadeout-modal-icon">🌙</span>
+                        <h3>{{ FADE_OUT_CONFIG.title }}</h3>
+                    </div>
+                    <div class="fadeout-modal-body">
+                        <p>{{ FADE_OUT_CONFIG.tip }}</p>
+                        <p class="fadeout-modal-detail">
+                            {{ FADE_OUT_CONFIG.detail }}
+                        </p>
+                    </div>
+                    <div class="fadeout-modal-footer">
+                        <button class="fadeout-modal-btn" @click="toggleFadeOutInfo">知道了</button>
+                    </div>
+                </div>
+            </div>
             <div class="header">
                 <button class="theme-toggle" @click="toggleTheme" :title="isDarkMode ? '切换到明亮模式' : '切换到暗黑模式'">
                     <svg v-if="!isDarkMode" viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
@@ -484,7 +610,7 @@ createApp({
                     <div class="timer-header">
                         <span class="timer-icon">⏰</span>
                         <span class="timer-title">定时停止</span>
-                        <span v-if="timerEndTime" class="timer-countdown">{{ getRemainingTime() }}</span>
+                        <span v-if="timerEndTime" class="timer-countdown">{{ remainingTimeDisplay }}</span>
                     </div>
                     <div v-if="!timerEndTime" class="timer-controls">
                         <select v-model="timerHours" class="timer-select">
@@ -504,6 +630,27 @@ createApp({
                     </div>
                     <div v-else class="timer-active">
                         <button class="timer-btn cancel-btn" @click="cancelTimer">取消定时</button>
+                    </div>
+
+                    <!-- 淡出模式开关 - 只在开始定时后显示 -->
+                    <div v-if="timerEndTime" class="fadeout-toggle">
+                        <label class="fadeout-checkbox">
+                            <input
+                                type="checkbox"
+                                :checked="isFadeOutMode"
+                                @change="toggleFadeOutMode"
+                            >
+                            <span class="fadeout-text">
+                                <span class="fadeout-icon">🌙</span>
+                                淡出模式
+                                <span class="fadeout-badge" v-if="isFadeOutMode">已启用</span>
+                            </span>
+                        </label>
+                        <button class="fadeout-info-btn" @click="toggleFadeOutInfo" title="什么是淡出模式?">
+                            <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/>
+                            </svg>
+                        </button>
                     </div>
                 </div>
 
