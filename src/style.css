@@ -218,10 +218,10 @@ body {
     transition: all 0.2s;
 }
 
-.control-btn:hover {
+/* .control-btn:hover {
     background: #e2e8f0;
     transform: scale(1.05);
-}
+} */
 
 .control-btn:active {
     transform: scale(0.95);
