@@ -623,6 +623,14 @@ body.dark-mode .playlist {
     scrollbar-color: #4a5568 #2d3748;
 }
 
+body.dark-mode .playlistTitle {
+    color: #e2e8f0;
+    background: #1a202c;
+    margin-top: -20px;
+    padding:0 20px;
+    padding-top: 20px;
+}
+
 /* 移动端优化 */
 @media (max-width: 480px) {
     body {
