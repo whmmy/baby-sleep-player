@@ -460,28 +460,36 @@ body {
 
 /* 美化滚动条 */
 .playlist::-webkit-scrollbar {
-    width: 8px;
+    width: 6px;
 }
 
 .playlist::-webkit-scrollbar-track {
-    background: #edf2f7;
-    border-radius: 4px;
+    background: transparent;
+    border-radius: 3px;
 }
 
 .playlist::-webkit-scrollbar-thumb {
     background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
-    border-radius: 4px;
-    transition: background 0.3s;
+    border-radius: 3px;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    background-clip: padding-box;
 }
 
 .playlist::-webkit-scrollbar-thumb:hover {
     background: linear-gradient(135deg, #4c51bf 0%, #5a3d7a 100%);
+    border: 2px solid transparent;
+    background-clip: padding-box;
+}
+
+.playlist::-webkit-scrollbar-thumb:active {
+    background: linear-gradient(135deg, #434190 0%, #553c7a 100%);
 }
 
 /* Firefox 滚动条样式 */
 .playlist {
     scrollbar-width: thin;
-    scrollbar-color: #5a67d8 #edf2f7;
+    scrollbar-color: #5a67d8 transparent;
 }
 
 /* 暗黑模式样式 */
@@ -616,11 +624,27 @@ body.dark-mode .track-item.active {
 }
 
 body.dark-mode .playlist::-webkit-scrollbar-track {
-    background: #2d3748;
+    background: transparent;
+}
+
+body.dark-mode .playlist::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #6b46c1 0%, #805ad5 100%);
+    border: 2px solid transparent;
+    background-clip: padding-box;
+}
+
+body.dark-mode .playlist::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #805ad5 0%, #9f7aea 100%);
+    border: 2px solid transparent;
+    background-clip: padding-box;
+}
+
+body.dark-mode .playlist::-webkit-scrollbar-thumb:active {
+    background: linear-gradient(135deg, #553c9a 0%, #6b46c1 100%);
 }
 
 body.dark-mode .playlist {
-    scrollbar-color: #4a5568 #2d3748;
+    scrollbar-color: #805ad5 transparent;
 }
 
 body.dark-mode .playlistTitle {
