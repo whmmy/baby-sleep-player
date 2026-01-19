@@ -7,12 +7,12 @@ createApp({
         const audioFiles = ref([
             {
                 id: 0,
-                name: '哄睡白噪音',
+                name: '默认白噪音',
                 url: './assets/哄睡白噪音.mp3'
             },
             {
                 id: 1,
-                name: '嘘声',
+                name: '嘘声（推荐）',
                 url: './assets/06嘘声.aac'
             },
             {
@@ -329,7 +329,7 @@ createApp({
         };
 
         // 设置定时停止
-        const setTimer = () => {
+        const setTimer = async () => {
             const totalMinutes = timerHours.value * 60 + timerMinutes.value;
             if (totalMinutes <= 0) {
                 alert('请设置有效的时间');
@@ -364,6 +364,20 @@ createApp({
                 fadeOutTimerId = setTimeout(() => {
                     startFadeOut();
                 }, fadeOutStartTime);
+            }
+
+            // 自动开始播放（如果还没有播放）
+            if (!isPlaying.value) {
+                try {
+                    if (!currentTrack.value && audioFiles.value.length > 0) {
+                        await playTrack(audioFiles.value[0]);
+                    } else if (currentTrack.value) {
+                        await audioElement.value.play();
+                        await requestWakeLock();
+                    }
+                } catch (error) {
+                    console.error('自动播放失败:', error);
+                }
             }
 
             // 启动主定时器（后台播放时也会执行）
@@ -403,6 +417,11 @@ createApp({
                     if (audioElement.value) {
                         audioElement.value.volume = 0;
                         volume.value = 0;
+                        //完成后需要将音量调整回来，可再下次使用
+                        setTimeout(() => {
+                            volume.value = originalVolume.value;
+                            audioElement.value.volume = originalVolume.value;
+                        }, 1000);
                     }
                     clearInterval(fadeOutInterval);
                 } else {
@@ -429,15 +448,60 @@ createApp({
             timerEndTime.value = null;
 
             // 如果在淡出过程中取消,恢复原始音量
-            if (isFadeOutMode.value && audioElement.value) {
+            if (audioElement.value) {
                 volume.value = originalVolume.value;
                 audioElement.value.volume = originalVolume.value;
             }
         };
 
+        // 在定时期间调整淡出模式
+        const adjustFadeOutMode = () => {
+            if (!timerEndTime.value) return; // 没有定时，不处理
+
+            const now = new Date();
+            const remainingTime = timerEndTime.value - now;
+
+            // 如果剩余时间小于淡出时长，不允许关闭（已经在淡出中）
+            if (remainingTime <= FADE_OUT_CONFIG.duration && fadeOutTimerId) {
+                alert('淡出已经开始，无法关闭');
+                return;
+            }
+
+            // 清除现有的淡出定时器
+            if (fadeOutTimerId) {
+                clearTimeout(fadeOutTimerId);
+                fadeOutTimerId = null;
+            }
+
+            // 如果开启淡出模式且剩余时间足够
+            if (isFadeOutMode.value && remainingTime > FADE_OUT_CONFIG.duration) {
+                // 保存当前音量作为原始音量
+                originalVolume.value = volume.value;
+
+                // 计算淡出开始时间
+                const fadeOutStartTime = remainingTime - FADE_OUT_CONFIG.duration;
+
+                // 设置淡出定时器
+                fadeOutTimerId = setTimeout(() => {
+                    startFadeOut();
+                }, fadeOutStartTime);
+            }
+        };
+
         // 切换淡出模式
         const toggleFadeOutMode = () => {
+            // 保存当前音量（在开启淡出时作为原始音量）
+            if (!isFadeOutMode.value && audioElement.value) {
+                originalVolume.value = volume.value;
+            }
+
             isFadeOutMode.value = !isFadeOutMode.value;
+
+            // 如果定时正在运行，调整淡出设置
+            if (timerEndTime.value) {
+                adjustFadeOutMode();
+            }
+
             // 持久化保存淡出模式状态
             localStorage.setItem('fadeOutMode', isFadeOutMode.value.toString());
         };
@@ -620,6 +684,7 @@ createApp({
                             <option :value="3">3小时</option>
                         </select>
                         <select v-model="timerMinutes" class="timer-select">
+                            <option :value="4">4分钟</option>
                             <option :value="5">5分钟</option>
                             <option :value="10">10分钟</option>
                             <option :value="15">15分钟</option>
