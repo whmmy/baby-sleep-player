@@ -105,6 +105,9 @@ createApp({
         let fadeOutTimerId = null;
         const originalVolume = ref(0.7);
 
+        // ========== iOS 设备检测 ==========
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+
         // ========== 淡出模式配置 ==========
         const FADE_OUT_CONFIG = {
             duration: 3 * 60 * 1000,      // 淡出总时长: 3分钟(毫秒)
@@ -575,7 +578,8 @@ createApp({
             toggleTheme,
             toggleFadeOutMode,
             toggleFadeOutInfo,
-            remainingTimeDisplay
+            remainingTimeDisplay,
+            isIOS  // 暴露 iOS 检测结果给模板
         };
     },
     template: `
@@ -661,7 +665,7 @@ createApp({
                 </div>
 
                 <!-- 音量控制 -->
-                <div class="volume-control">
+                <div class="volume-control"  v-show="!isIOS">
                     <svg class="volume-icon" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/>
                     </svg>
@@ -705,7 +709,7 @@ createApp({
                     </div>
 
                     <!-- 淡出模式开关 - 只在开始定时后显示 -->
-                    <div v-if="timerEndTime" class="fadeout-toggle">
+                    <div v-show="timerEndTime && !isIOS" class="fadeout-toggle">
                         <label class="fadeout-checkbox">
                             <input
                                 type="checkbox"
