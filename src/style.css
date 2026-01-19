@@ -23,6 +23,8 @@ body {
     max-width: 480px;
     width: 100%;
     overflow: hidden;
+    /* 移动端触摸优化 */
+    touch-action: pan-y;
 }
 
 .header {
@@ -399,6 +401,10 @@ body {
     overflow-y: auto;
     display: flex;
     flex-direction: column;
+    /* 移动端滚动优化 */
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
+    overscroll-behavior: contain;
 }
 
 .playlistTitle {
@@ -601,6 +607,10 @@ body.dark-mode .star-tip {
 
 body.dark-mode .playlist {
     background: #1a202c;
+    /* 移动端滚动优化 */
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
+    overscroll-behavior: contain;
 }
 
 body.dark-mode .playlist h3 {
@@ -918,5 +928,20 @@ body.dark-mode .fadeout-modal-detail {
         right: 15px;
         width: 36px;
         height: 36px;
+    }
+
+    /* 音频列表在移动端的优化 */
+    .playlist {
+        max-height: 250px;
+        /* 增强移动端滚动体验 */
+        -webkit-overflow-scrolling: touch;
+        touch-action: pan-y;
+        overscroll-behavior: contain;
+    }
+
+    .track-item {
+        padding: 14px 12px;
+        /* 增加触摸区域 */
+        min-height: 48px;
     }
 }
