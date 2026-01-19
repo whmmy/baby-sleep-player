@@ -218,6 +218,102 @@ body {
     text-align: right;
 }
 
+.timer-section {
+    background: #f7fafc;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 20px;
+}
+
+.timer-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.timer-icon {
+    font-size: 18px;
+}
+
+.timer-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #2d3748;
+    flex: 1;
+}
+
+.timer-countdown {
+    font-size: 14px;
+    font-weight: 600;
+    color: #5a67d8;
+    background: white;
+    padding: 4px 12px;
+    border-radius: 6px;
+}
+
+.timer-controls {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.timer-select {
+    flex: 1;
+    padding: 8px 12px;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    background: white;
+    font-size: 13px;
+    color: #2d3748;
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+
+.timer-select:hover {
+    border-color: #cbd5e0;
+}
+
+.timer-select:focus {
+    border-color: #5a67d8;
+}
+
+.timer-btn {
+    padding: 8px 16px;
+    background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.timer-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(90, 103, 216, 0.3);
+}
+
+.timer-btn:active {
+    transform: translateY(0);
+}
+
+.timer-active {
+    display: flex;
+    justify-content: center;
+}
+
+.cancel-btn {
+    background: linear-gradient(135deg, #fc8181 0%, #f56565 100%);
+}
+
+.cancel-btn:hover {
+    box-shadow: 0 4px 12px rgba(245, 101, 101, 0.3);
+}
+
 .tips {
     text-align: center;
     color: #718096;
@@ -227,6 +323,45 @@ body {
 
 .tips p {
     margin: 4px 0;
+}
+
+.github-link {
+    margin-top: 20px;
+    padding: 16px;
+    background: linear-gradient(135deg, #f0f4ff 0%, #e8f0ff 100%);
+    border-radius: 12px;
+    text-align: center;
+}
+
+.github-link a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #5a67d8;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 8px 16px;
+    background: white;
+    border-radius: 8px;
+    transition: all 0.2s;
+    box-shadow: 0 2px 8px rgba(90, 103, 216, 0.15);
+}
+
+.github-link a:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(90, 103, 216, 0.25);
+}
+
+.github-link a svg {
+    flex-shrink: 0;
+}
+
+.star-tip {
+    margin-top: 12px !important;
+    font-size: 13px !important;
+    color: #6b46c1;
+    font-weight: 500;
 }
 
 .playlist {
@@ -315,5 +450,17 @@ body {
     .play-btn {
         width: 64px;
         height: 64px;
+    }
+
+    .timer-controls {
+        flex-direction: column;
+    }
+
+    .timer-select {
+        width: 100%;
+    }
+
+    .timer-btn {
+        width: 100%;
     }
 }
