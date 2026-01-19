@@ -397,14 +397,9 @@ body {
 .playlist {
     background: #f7fafc;
     padding: 20px;
-    max-height: 300px;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    /* 移动端滚动优化 */
-    -webkit-overflow-scrolling: touch;
-    touch-action: pan-y;
-    overscroll-behavior: contain;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
 }
 
 .playlistTitle {
@@ -423,12 +418,13 @@ body {
 .track-item {
     display: flex;
     align-items: center;
-    padding: 12px 16px;
+    justify-content: center;
+    padding: 12px 8px;
     background: white;
     border-radius: 12px;
-    margin-bottom: 8px;
     cursor: pointer;
     transition: all 0.2s;
+    text-align: center;
 }
 
 .track-item:hover {
@@ -443,8 +439,9 @@ body {
 
 .track-item .track-info {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 12px;
+    gap: 6px;
     flex: 1;
 }
 
@@ -462,40 +459,6 @@ body {
 
 .track-item.active .playing-indicator {
     background: rgba(255, 255, 255, 0.3);
-}
-
-/* 美化滚动条 */
-.playlist::-webkit-scrollbar {
-    width: 6px;
-}
-
-.playlist::-webkit-scrollbar-track {
-    background: transparent;
-    border-radius: 3px;
-}
-
-.playlist::-webkit-scrollbar-thumb {
-    background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
-    border-radius: 3px;
-    transition: all 0.3s ease;
-    border: 2px solid transparent;
-    background-clip: padding-box;
-}
-
-.playlist::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(135deg, #4c51bf 0%, #5a3d7a 100%);
-    border: 2px solid transparent;
-    background-clip: padding-box;
-}
-
-.playlist::-webkit-scrollbar-thumb:active {
-    background: linear-gradient(135deg, #434190 0%, #553c7a 100%);
-}
-
-/* Firefox 滚动条样式 */
-.playlist {
-    scrollbar-width: thin;
-    scrollbar-color: #5a67d8 transparent;
 }
 
 /* 暗黑模式样式 */
@@ -607,10 +570,6 @@ body.dark-mode .star-tip {
 
 body.dark-mode .playlist {
     background: #1a202c;
-    /* 移动端滚动优化 */
-    -webkit-overflow-scrolling: touch;
-    touch-action: pan-y;
-    overscroll-behavior: contain;
 }
 
 body.dark-mode .playlist h3 {
@@ -631,30 +590,6 @@ body.dark-mode .track-item:hover {
 
 body.dark-mode .track-item.active {
     background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
-}
-
-body.dark-mode .playlist::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-body.dark-mode .playlist::-webkit-scrollbar-thumb {
-    background: linear-gradient(135deg, #6b46c1 0%, #805ad5 100%);
-    border: 2px solid transparent;
-    background-clip: padding-box;
-}
-
-body.dark-mode .playlist::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(135deg, #805ad5 0%, #9f7aea 100%);
-    border: 2px solid transparent;
-    background-clip: padding-box;
-}
-
-body.dark-mode .playlist::-webkit-scrollbar-thumb:active {
-    background: linear-gradient(135deg, #553c9a 0%, #6b46c1 100%);
-}
-
-body.dark-mode .playlist {
-    scrollbar-color: #805ad5 transparent;
 }
 
 body.dark-mode .playlistTitle {
@@ -932,16 +867,17 @@ body.dark-mode .fadeout-modal-detail {
 
     /* 音频列表在移动端的优化 */
     .playlist {
-        max-height: 250px;
-        /* 增强移动端滚动体验 */
-        -webkit-overflow-scrolling: touch;
-        touch-action: pan-y;
-        overscroll-behavior: contain;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+        padding: 16px;
     }
 
     .track-item {
-        padding: 14px 12px;
-        /* 增加触摸区域 */
-        min-height: 48px;
+        padding: 12px 8px;
+        font-size: 13px;
+    }
+
+    .track-name {
+        font-size: 13px;
     }
 }

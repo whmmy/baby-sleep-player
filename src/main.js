@@ -674,9 +674,11 @@ createApp({
                 >
                     <div class="track-info">
                         <span class="track-name">{{ track.name }}</span>
+                        <!-- 
                         <span v-if="currentTrack && currentTrack.id === track.id && isPlaying" class="playing-indicator">
                             播放中
                         </span>
+                         -->
                     </div>
                 </div>
             </div>
