@@ -684,7 +684,6 @@ createApp({
                             <option :value="3">3小时</option>
                         </select>
                         <select v-model="timerMinutes" class="timer-select">
-                            <option :value="4">4分钟</option>
                             <option :value="5">5分钟</option>
                             <option :value="10">10分钟</option>
                             <option :value="15">15分钟</option>
