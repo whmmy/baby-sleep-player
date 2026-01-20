@@ -86,7 +86,7 @@ createApp({
                 url: './assets/15吹风机.aac'
             },
             {
-                id: 15,
+                id: 16,
                 name: '钢琴雨声',
                 url: './assets/16钢琴曲+雨声.aac'
             }
