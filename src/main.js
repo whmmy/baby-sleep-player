@@ -82,8 +82,8 @@ createApp({
             },
             {
                 id: 15,
-                name: '哄睡白噪音',
-                url: './assets/哄睡白噪音.mp3'
+                name: '吹风机',
+                url: './assets/16吹风机.aac'
             }
         ]);
 
