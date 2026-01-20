@@ -83,7 +83,12 @@ createApp({
             {
                 id: 15,
                 name: '吹风机',
-                url: './assets/16吹风机.aac'
+                url: './assets/15吹风机.aac'
+            },
+            {
+                id: 15,
+                name: '吹风机',
+                url: './assets/16钢琴曲+雨声.aac'
             }
         ]);
 
