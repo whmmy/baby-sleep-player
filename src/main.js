@@ -87,7 +87,7 @@ createApp({
             },
             {
                 id: 15,
-                name: '吹风机',
+                name: '钢琴雨声',
                 url: './assets/16钢琴曲+雨声.aac'
             }
         ]);
