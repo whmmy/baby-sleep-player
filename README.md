@@ -22,6 +22,12 @@
 ### iOS 界面
 ![iOS 界面](img/app_img_ios.png)
 
+## 🔗 在线体验
+
+**体验地址：** https://whmmy.github.io/baby-sleep-player/
+
+直接在浏览器中打开即可使用，无需安装任何应用！
+
 ## 🚀 快速开始
 
 ### 启动本地服务器（必须）
